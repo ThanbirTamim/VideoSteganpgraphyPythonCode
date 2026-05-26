@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="36d03d9c-4b25-4cd8-bd55-fadd9204937a" name="Changes" comment="update code">
-      <change afterPath="$PROJECT_DIR$/analysis_report.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/secret_text.txt" beforeDir="false" afterPath="$PROJECT_DIR$/secret_text.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/video_steg.py" beforeDir="false" afterPath="$PROJECT_DIR$/video_steg.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -80,7 +76,7 @@
       <updated>1779721000605</updated>
       <workItem from="1779721001693" duration="1000" />
       <workItem from="1779722221206" duration="8698000" />
-      <workItem from="1779762345233" duration="8117000" />
+      <workItem from="1779762345233" duration="9325000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -122,7 +118,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779767245793</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="update code">
+      <option name="closed" value="true" />
+      <created>1779770585326</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1779770585326</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
