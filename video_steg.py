@@ -93,6 +93,18 @@ from metrics import mse, rmse, mae, psnr, snr, ssim_metric, mmd, capacity_ratio
 from logger_utils import log_header, write_log
 from attacks import run_attack_suite
 
+from attacks import (
+    salt_pepper_noise,
+    speckle_noise,
+    gaussian_blur_attack,
+    median_filter_attack,
+    jpeg_attack,
+    rotate_attack
+)
+
+from metrics import bit_error_rate, ncc, zncc, nlse, entropy
+from analysis_report import AttackStore, save_attack_csv
+
 # =============================================================================
 # CONFIG  — must be identical between embed and extract runs
 # =============================================================================
@@ -455,8 +467,18 @@ def rs_decode(data: bytes, ecc_bytes: int) -> bytes:
 
 def embed(video: str, message: str, output: str):
     store = MetricsStore()
+    attack_store = AttackStore()
     log_header("embed_log.txt", "EMBED PROCESS")
     embed_start = time.time()
+
+    attack_map = {
+        "SALT_PEPPER": salt_pepper_noise,
+        "SPECKLE": speckle_noise,
+        "GAUSSIAN_BLUR": gaussian_blur_attack,
+        "MEDIAN_FILTER": median_filter_attack,
+        "JPEG_40": lambda x: jpeg_attack(x, 40),
+        "ROTATION": rotate_attack
+    }
 
     print("\n" + "=" * 70)
     print("[EMBED] VIDEO STEGANOGRAPHY v3 STARTED")
@@ -586,6 +608,32 @@ def embed(video: str, message: str, output: str):
                 (frame_end - frame_start)
             )
 
+            # ======================================================
+            # ATTACK SUITE (CORRECT PER FRAME)
+            # ======================================================
+            for attack_name, attack_fn in attack_map.items():
+                attacked = attack_fn(stego_frames[frame_index])
+
+                cover_bits = (frames[frame_index][:, :, 0] & 1).flatten()
+                attacked_bits = (attacked[:, :, 0] & 1).flatten()
+
+                ber_val = bit_error_rate(cover_bits, attacked_bits)
+                ncc_val = ncc(frames[frame_index], attacked)
+                zncc_val = zncc(frames[frame_index], attacked)
+                nlse_val = nlse(frames[frame_index], attacked)
+                entropy_val = entropy(attacked)
+
+                attack_store.add(
+                    frame_index,
+                    attack_name,
+                    ber_val,
+                    ncc_val,
+                    zncc_val,
+                    nlse_val,
+                    entropy_val
+                )
+
+
             overall_mse.append(fm);
             overall_rmse.append(frm)
             overall_mae.append(fma);
@@ -655,7 +703,7 @@ EMBED_TIME     : {elapsed:.4f} sec
         print(f"[RESULT] Embed Time         : {elapsed:.4f} sec")
         print("=" * 70 + "\n")
 
-        generate_full_report(frames, stego_frames, store)
+        generate_full_report(frames, stego_frames, store, attack_store)
 
     finally:
         shutil.rmtree(tmp_dir, ignore_errors=True)
