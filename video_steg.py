@@ -1144,39 +1144,56 @@ def main():
 
     sub = parser.add_subparsers(dest="mode", required=True)
 
+    # ------------------------------------------------------------------
+    # EMBED MODE (UPDATED: read from txt file)
+    # ------------------------------------------------------------------
     emb = sub.add_parser("embed")
     emb.add_argument("--video", required=True)
-    emb.add_argument("--message", required=True)
+    emb.add_argument("--message_file", required=True)
     emb.add_argument("--output", required=True)
 
+    # ------------------------------------------------------------------
+    # EXTRACT MODE
+    # ------------------------------------------------------------------
     ext = sub.add_parser("extract")
     ext.add_argument("--video", required=True)
     ext.add_argument("--output", default="recovered.txt")
 
-    # NEW: attack testing mode
+    # ------------------------------------------------------------------
+    # ATTACK MODE
+    # ------------------------------------------------------------------
     atk = sub.add_parser("attack")
     atk.add_argument("--video", required=True)
     atk.add_argument("--output_log", default="attacks_log.txt")
 
     args = parser.parse_args()
 
+    # ------------------------------------------------------------------
+    # EMBED
+    # ------------------------------------------------------------------
     if args.mode == "embed":
 
-        embed(args.video, args.message, args.output)
+        with open(args.message_file, "r", encoding="utf-8") as f:
+            message = f.read()
 
+        embed(args.video, message, args.output)
+
+    # ------------------------------------------------------------------
+    # EXTRACT
+    # ------------------------------------------------------------------
     elif args.mode == "extract":
 
         extract(args.video, args.output)
 
+    # ------------------------------------------------------------------
+    # ATTACK
+    # ------------------------------------------------------------------
     elif args.mode == "attack":
 
-        # STEP 1: load stego video frames
         frames = load_frames_from_video(args.video)
 
-        # STEP 2: initialize log
         log_header(args.output_log, "ROBUSTNESS ANALYSIS")
 
-        # STEP 3: run full attack suite
         run_attack_suite(frames, args.output_log)
 
     else:

@@ -75,7 +75,7 @@ ffmpeg -version
 
 ### 5. Usage
 ```bash
-python video_steg.py embed --video cover.avi --message "Hello World" --output stego.avi
+python video_steg.py embed --video cover.avi --message_file secret_text.txt --output stego.avi
 
 python video_steg.py extract --video stego.avi --output recovered.txt
 
