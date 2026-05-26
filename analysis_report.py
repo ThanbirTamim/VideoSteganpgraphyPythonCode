@@ -57,7 +57,26 @@ class MetricsStore:
         self.capacity_ratio.append(cap_ratio)
         self.time.append(embed_time)
 
+class AttackStore:
+    def __init__(self):
+        self.frames = []
+        self.attack = []
 
+        self.ber = []
+        self.ncc = []
+        self.zncc = []
+        self.nlse = []
+        self.entropy = []
+
+    def add(self, frame_id, attack_name, ber, ncc, zncc, nlse, entropy_v):
+        self.frames.append(frame_id)
+        self.attack.append(attack_name)
+
+        self.ber.append(ber)
+        self.ncc.append(ncc)
+        self.zncc.append(zncc)
+        self.nlse.append(nlse)
+        self.entropy.append(entropy_v)
 # =========================================================
 # 2. CSV EXPORT (FULL THESIS TABLE)
 # =========================================================
@@ -88,6 +107,22 @@ def save_csv(store: MetricsStore, path="logs/report.csv"):
     df.to_csv(path, index=False)
     print(f"[REPORT] CSV saved -> {path}")
 
+def save_attack_csv(store: AttackStore, path="logs/attack_report.csv"):
+
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+
+    df = pd.DataFrame({
+        "frame": store.frames,
+        "attack": store.attack,
+        "ber": store.ber,
+        "ncc": store.ncc,
+        "zncc": store.zncc,
+        "nlse": store.nlse,
+        "entropy": store.entropy
+    })
+
+    df.to_csv(path, index=False)
+    print(f"[ATTACK REPORT] CSV saved -> {path}")
 
 # =========================================================
 # 3. PLOTS (MULTI-METRIC VISUALIZATION)
@@ -177,9 +212,10 @@ def attack_report(attack_logs, outpath="logs/attack_summary.csv"):
 # 7. MASTER REPORT GENERATOR
 # =========================================================
 
-def generate_full_report(cover_frames, stego_frames, store: MetricsStore):
+def generate_full_report(cover_frames, stego_frames, store: MetricsStore, attack_store: AttackStore):
 
     save_csv(store)
+    save_attack_csv(attack_store)
     plot_metrics(store)
     histogram_analysis(cover_frames, stego_frames)
     save_difference_map(cover_frames[0], stego_frames[0])
