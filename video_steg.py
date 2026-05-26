@@ -102,8 +102,6 @@ from reedsolo import RSCodec
 # =============================================================================
 # CONFIG
 # =============================================================================
-log_header("embed_log.txt", "EMBED PROCESS")
-
 AES_KEY_LEN = 32
 META_MAGIC = b"STEG"
 
@@ -524,6 +522,8 @@ def fisher_yates(n, seed):
 
 def embed(video, message, output):
 
+    log_header("embed_log.txt", "EMBED PROCESS")
+
     embed_start = time.time()
 
     print("\n" + "=" * 70)
@@ -618,7 +618,7 @@ def embed(video, message, output):
         vgg = VGGSmoothnessExtractor(device)
 
         # ------------------------------------------------------------------
-        # PREPARE STEGO FRAME COPY
+        # PREPARE STEGO FRAMES
         # ------------------------------------------------------------------
 
         stego_frames = [f.copy() for f in frames]
@@ -626,6 +626,13 @@ def embed(video, message, output):
         bit_pointer = 0
 
         used_frames = 0
+
+        total_capacity = 0
+
+        overall_mse = []
+        overall_rmse = []
+        overall_mae = []
+        overall_psnr = []
 
         # ------------------------------------------------------------------
         # EMBEDDING LOOP
@@ -649,7 +656,13 @@ def embed(video, message, output):
 
             frame_capacity = len(embedding_pixels)
 
+            total_capacity += frame_capacity
+
             embedded_in_frame = 0
+
+            # --------------------------------------------------------------
+            # EMBED BITS
+            # --------------------------------------------------------------
 
             for px, py in embedding_pixels:
 
@@ -658,7 +671,6 @@ def embed(video, message, output):
 
                 bit = secret_bits[bit_pointer]
 
-                # LSB embedding on RED channel
                 original_pixel = frame_rgb[py, px, 0]
 
                 modified_pixel = (
@@ -675,6 +687,62 @@ def embed(video, message, output):
 
             used_frames += 1
 
+            # --------------------------------------------------------------
+            # METRICS
+            # --------------------------------------------------------------
+
+            frame_mse = mse(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            frame_rmse = rmse(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            frame_mae = mae(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            frame_psnr = psnr(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            frame_capacity_ratio = capacity_ratio(
+                embedded_in_frame,
+                frame_capacity
+            )
+
+            frame_snr = snr(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            frame_ssim = ssim_metric(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            frame_mmd = mmd(
+                frames[frame_index],
+                stego_frames[frame_index]
+            )
+
+            overall_mse.append(frame_mse)
+            overall_rmse.append(frame_rmse)
+            overall_mae.append(frame_mae)
+            overall_psnr.append(frame_psnr)
+            overall_psnr.append(frame_snr)
+            overall_psnr.append(frame_ssim)
+            overall_psnr.append(frame_mmd)
+
+            # --------------------------------------------------------------
+            # PRINT CONSOLE
+            # --------------------------------------------------------------
+
             print(
                 f"[FRAME {frame_index:03d}] "
                 f"Embedded: {embedded_in_frame} bits | "
@@ -682,8 +750,34 @@ def embed(video, message, output):
                 f"Time: {(frame_end - frame_start):.4f} sec"
             )
 
+            # --------------------------------------------------------------
+            # LOGGING
+            # --------------------------------------------------------------
+
+            frame_log = f"""
+FRAME: {frame_index}
+    
+EMBEDDED_BITS : {embedded_in_frame}
+CAPACITY_BITS : {frame_capacity}
+CAPACITY_RATIO: {frame_capacity_ratio:.6f}
+    
+MSE   : {frame_mse:.8f}
+RMSE  : {frame_rmse:.8f}
+MAE   : {frame_mae:.8f}
+PSNR  : {frame_psnr:.4f}
+SNR   : {frame_snr:.4f}
+SSIM  : {frame_ssim:.8f}
+MMD   : {frame_mmd:.8f}
+    
+EMBED_TIME : {(frame_end - frame_start):.4f} sec
+
+------------------------------------------------------------
+"""
+
+            write_log("embed_log.txt", frame_log)
+
         # ------------------------------------------------------------------
-        # FINAL VALIDATION
+        # VALIDATION
         # ------------------------------------------------------------------
 
         if bit_pointer < total_secret_bits:
@@ -729,6 +823,35 @@ def embed(video, message, output):
         )
 
         # ------------------------------------------------------------------
+        # OVERALL METRICS
+        # ------------------------------------------------------------------
+
+        overall_log = f"""
+======================================================================
+OVERALL RESULTS
+======================================================================
+
+TOTAL_FRAMES_USED : {used_frames}
+
+PAYLOAD_BITS      : {bit_pointer}
+PAYLOAD_BYTES     : {bit_pointer / 8:.4f}
+
+TOTAL_CAPACITY    : {total_capacity}
+CAPACITY_RATIO    : {capacity_ratio(bit_pointer, total_capacity):.6f}
+
+AVG_MSE           : {np.mean(overall_mse):.8f}
+AVG_RMSE          : {np.mean(overall_rmse):.8f}
+AVG_MAE           : {np.mean(overall_mae):.8f}
+AVG_PSNR          : {np.mean(overall_psnr):.4f}
+
+TOTAL_EMBED_TIME  : {(time.time() - embed_start):.4f} sec
+
+======================================================================
+"""
+
+        write_log("embed_log.txt", overall_log)
+
+        # ------------------------------------------------------------------
         # FINAL REPORT
         # ------------------------------------------------------------------
 
@@ -757,7 +880,7 @@ def embed(video, message, output):
             ignore_errors=True
         )
 
-log_header("attacks_log.txt", "ROBUSTNESS ANALYSIS")
+
 # =============================================================================
 # EXTRACT
 # =============================================================================

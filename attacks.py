@@ -3,7 +3,13 @@ import numpy as np
 from scipy.stats import chisquare
 
 from logger_utils import write_log
-from metrics import mse, rmse, mae, psnr
+from metrics import (
+    bit_error_rate,
+    ncc,
+    zncc,
+    nlse,
+    entropy
+)
 
 
 # =============================================================================
@@ -111,6 +117,10 @@ def run_attack_suite(frames, log_path):
 
     original = frames[0]
 
+    original_bits = (
+        original[:, :, 0] & 1
+    ).flatten()
+
     attack_map = {
         "SALT_PEPPER": salt_pepper_noise,
         "SPECKLE": speckle_noise,
@@ -124,23 +134,67 @@ def run_attack_suite(frames, log_path):
 
         attacked = fn(original)
 
+        attacked_bits = (
+            attacked[:, :, 0] & 1
+        ).flatten()
+
+        ber_value = bit_error_rate(
+            original_bits,
+            attacked_bits
+        )
+
+        ncc_value = ncc(
+            original,
+            attacked
+        )
+
+        zncc_value = zncc(
+            original,
+            attacked
+        )
+
+        nlse_value = nlse(
+            original,
+            attacked
+        )
+
+        entropy_value = entropy(
+            attacked
+        )
+
+        chi, p = chi_square_attack(attacked)
+
+        hist_diff = histogram_difference(
+            original,
+            attacked
+        )
+
         log = f"""
-===============================
+======================================================================
 ATTACK: {name}
-===============================
+======================================================================
 
-MSE  : {mse(original, attacked):.6f}
-RMSE : {rmse(original, attacked):.6f}
-MAE  : {mae(original, attacked):.6f}
-PSNR : {psnr(original, attacked):.4f}
+BER             : {ber_value:.8f}
+NCC             : {ncc_value:.8f}
+ZNCC            : {zncc_value:.8f}
+NLSE            : {nlse_value:.8f}
+ENTROPY         : {entropy_value:.8f}
+CHI-SQUARE      : {chi:.8f}
+P-VALUE         : {p:.8f}
+HISTOGRAM_DIFF  : {hist_diff:.8f}
 
+======================================================================
 """
 
         write_log(log_path, log)
 
-    chi, p = chi_square_attack(original)
+        # --------------------------------------------------------------
+        # SAVE LSB VISUALIZATION
+        # --------------------------------------------------------------
 
-    write_log(
-        log_path,
-        f"\nCHI-SQUARE TEST:\nCHI = {chi:.4f} | P-VALUE = {p:.8f}\n"
-    )
+        lsb_img = lsb_visualization(attacked)
+
+        cv2.imwrite(
+            f"logs/lsb_{name}.png",
+            lsb_img
+        )

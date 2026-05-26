@@ -8,3 +8,4 @@ scikit-image
 pycryptodome
 ffmpeg-python
 tqdm
+scikit-image

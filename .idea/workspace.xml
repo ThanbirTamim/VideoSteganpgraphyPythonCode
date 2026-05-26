@@ -2,12 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="36d03d9c-4b25-4cd8-bd55-fadd9204937a" name="Changes" comment="init">
-      <change beforePath="$PROJECT_DIR$/.idea/VideoSteganpgraphyPythonCode.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/VideoSteganpgraphyPythonCode.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/attacks.py" beforeDir="false" afterPath="$PROJECT_DIR$/attacks.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logger_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/logger_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/attacks_log.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logs/embed_log.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/recovered.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/video_steg.py" beforeDir="false" afterPath="$PROJECT_DIR$/video_steg.py" afterDir="false" />
     </list>
@@ -53,7 +54,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "master",
     "last_opened_file_path": "D:/Working Dir/phd documents/PythonCode/VideoSteganpgraphyPythonCode",
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "org.jetbrains.plugins.github.ui.GithubSettingsConfigurable",
@@ -82,8 +83,17 @@
       <updated>1779721000605</updated>
       <workItem from="1779721001693" duration="1000" />
       <workItem from="1779722221206" duration="8698000" />
-      <workItem from="1779762345233" duration="825000" />
+      <workItem from="1779762345233" duration="3485000" />
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1779763232824</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1779763232824</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

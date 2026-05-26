@@ -78,4 +78,6 @@ ffmpeg -version
 python video_steg.py embed --video cover.avi --message "Hello World" --output stego.avi
 
 python video_steg.py extract --video stego.avi --output recovered.txt
+
+python video_steg.py attack --video stego.avi
 ```
