@@ -9,3 +9,4 @@ pycryptodome
 ffmpeg-python
 tqdm
 scikit-image
+reedsolo

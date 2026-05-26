@@ -96,8 +96,8 @@ from torchvision import transforms
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import pad, unpad
 from Crypto.Random import get_random_bytes
-
 from reedsolo import RSCodec
+from analysis_report import MetricsStore, generate_full_report
 
 # =============================================================================
 # CONFIG
@@ -111,7 +111,37 @@ FRACTAL_N = 8
 FRACTAL_RADIUS = 20
 FRACTAL_DEPTH = 3
 
-ECC_BYTES = 32
+ECC_BYTES = 128
+
+
+# =============================================================================
+# REFRESH
+# =============================================================================
+def reset_workspace():
+    files_to_delete = [
+        "stego.avi",
+        "recovered.txt",
+        "attacks_log.txt",
+        "embed_log.txt"
+    ]
+
+    folders_to_delete = [
+        "logs"
+    ]
+
+    # delete files
+    for f in files_to_delete:
+        if os.path.exists(f):
+            os.remove(f)
+
+    # delete folders
+    for folder in folders_to_delete:
+        if os.path.exists(folder):
+            import shutil
+            shutil.rmtree(folder)
+
+    print("[RESET] Workspace cleaned successfully")
+
 
 # =============================================================================
 # BYTE / BIT
@@ -521,7 +551,7 @@ def fisher_yates(n, seed):
 # =============================================================================
 
 def embed(video, message, output):
-
+    store = MetricsStore()
     log_header("embed_log.txt", "EMBED PROCESS")
 
     embed_start = time.time()
@@ -633,6 +663,9 @@ def embed(video, message, output):
         overall_rmse = []
         overall_mae = []
         overall_psnr = []
+        overall_snr = []
+        overall_ssim = []
+        overall_mmd = []
 
         # ------------------------------------------------------------------
         # EMBEDDING LOOP
@@ -731,13 +764,21 @@ def embed(video, message, output):
                 stego_frames[frame_index]
             )
 
+            store.add(
+                frame_index,
+                frame_mse,
+                frame_psnr,
+                frame_ssim,
+                frame_capacity
+            )
+
             overall_mse.append(frame_mse)
             overall_rmse.append(frame_rmse)
             overall_mae.append(frame_mae)
             overall_psnr.append(frame_psnr)
-            overall_psnr.append(frame_snr)
-            overall_psnr.append(frame_ssim)
-            overall_psnr.append(frame_mmd)
+            overall_snr.append(frame_snr)
+            overall_ssim.append(frame_ssim)
+            overall_mmd.append(frame_mmd)
 
             # --------------------------------------------------------------
             # PRINT CONSOLE
@@ -872,6 +913,8 @@ TOTAL_EMBED_TIME  : {(time.time() - embed_start):.4f} sec
         print(f"[RESULT] Embedding Time     : {total_time:.4f} sec")
 
         print("=" * 70 + "\n")
+
+        generate_full_report(frames, stego_frames, store)
 
     finally:
 
@@ -1141,11 +1184,10 @@ def load_frames_from_video(video_path):
 def main():
 
     parser = argparse.ArgumentParser()
-
     sub = parser.add_subparsers(dest="mode", required=True)
 
     # ------------------------------------------------------------------
-    # EMBED MODE (UPDATED: read from txt file)
+    # EMBED MODE
     # ------------------------------------------------------------------
     emb = sub.add_parser("embed")
     emb.add_argument("--video", required=True)
@@ -1165,6 +1207,12 @@ def main():
     atk = sub.add_parser("attack")
     atk.add_argument("--video", required=True)
     atk.add_argument("--output_log", default="attacks_log.txt")
+
+    # ------------------------------------------------------------------
+    # RESET MODE
+    # ------------------------------------------------------------------
+    reset = sub.add_parser("reset")
+    reset.add_argument("--confirm", action="store_true")
 
     args = parser.parse_args()
 
@@ -1195,6 +1243,16 @@ def main():
         log_header(args.output_log, "ROBUSTNESS ANALYSIS")
 
         run_attack_suite(frames, args.output_log)
+
+    # ------------------------------------------------------------------
+    # RESET
+    # ------------------------------------------------------------------
+    elif args.mode == "reset":
+
+        if args.confirm:
+            reset_workspace()
+        else:
+            print("[RESET] Use --confirm to delete logs and outputs")
 
     else:
         raise ValueError("Unknown mode")
