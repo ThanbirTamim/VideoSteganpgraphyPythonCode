@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="36d03d9c-4b25-4cd8-bd55-fadd9204937a" name="Changes" comment="fix long text embed and extract">
-      <change afterPath="$PROJECT_DIR$/secret_text_100kb.txt" afterDir="false" />
+f    <list default="true" id="36d03d9c-4b25-4cd8-bd55-fadd9204937a" name="Changes" comment="fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/analysis_report.py" beforeDir="false" afterPath="$PROJECT_DIR$/analysis_report.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/secret_text.txt" beforeDir="false" afterPath="$PROJECT_DIR$/secret_text.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/video_steg.py" beforeDir="false" afterPath="$PROJECT_DIR$/video_steg.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -80,7 +77,7 @@
       <updated>1779721000605</updated>
       <workItem from="1779721001693" duration="1000" />
       <workItem from="1779722221206" duration="8698000" />
-      <workItem from="1779762345233" duration="12684000" />
+      <workItem from="1779762345233" duration="15335000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -138,7 +135,15 @@
       <option name="project" value="LOCAL" />
       <updated>1779771769945</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="fix">
+      <option name="closed" value="true" />
+      <created>1779775516005</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1779775516005</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -159,6 +164,7 @@
     <MESSAGE value="init" />
     <MESSAGE value="update code" />
     <MESSAGE value="fix long text embed and extract" />
-    <option name="LAST_COMMIT_MESSAGE" value="fix long text embed and extract" />
+    <MESSAGE value="fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="fix" />
   </component>
 </project>
