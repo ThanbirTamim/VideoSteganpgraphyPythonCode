@@ -10,3 +10,4 @@ ffmpeg-python
 tqdm
 scikit-image
 reedsolo
+matplotlib

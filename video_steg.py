@@ -571,7 +571,21 @@ def embed(video: str, message: str, output: str):
             fmm = mmd(frames[frame_index], stego_frames[frame_index])
             fcr = capacity_ratio(embedded, frame_cap)
 
-            store.add(frame_index, fm, fp, fss, frame_cap)
+            store.add(
+                frame_index,
+                fm,
+                frm,
+                fma,
+                fp,
+                fs,
+                fss,
+                fmm,
+                frame_cap,
+                embedded,
+                fcr,
+                (frame_end - frame_start)
+            )
+
             overall_mse.append(fm);
             overall_rmse.append(frm)
             overall_mae.append(fma);
